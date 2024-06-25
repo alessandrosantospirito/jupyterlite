@@ -54,6 +54,8 @@ RUN apt-get update && apt-get install -y \
     ruby-full \
     && rm -rf /var/lib/apt/lists/*
 
+RUN pip install jupyterlite-core
+
 # # ------------ PERSONAL SETUP ----------
 # # Install neovim
 # RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz && \
