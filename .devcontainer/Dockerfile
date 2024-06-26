@@ -56,6 +56,10 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install jupyterlite-core
 
+WORKDIR /usr/src/app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
 # # ------------ PERSONAL SETUP ----------
 # # Install neovim
 # RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz && \

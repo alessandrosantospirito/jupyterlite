@@ -2,5 +2,5 @@ This repository will host data and notebooks that run code from my "documentatio
 
 ## Jupyterlite Locally
 ```shell
-jupyter lite serve
+jupyter lite serve --lite-dir=content --contents=content
 ```
