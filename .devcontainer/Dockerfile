@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
 
 ENV TZ=Etc/UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
