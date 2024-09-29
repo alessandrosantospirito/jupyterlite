@@ -118,3 +118,4 @@ _output
 gym
 .devcontainer/
 workspace/
+.decontainer
