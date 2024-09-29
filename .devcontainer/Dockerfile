@@ -33,6 +33,7 @@ RUN pip install opencv-python
 RUN pip install ultralytics
 RUN pip install torch-geometric==2.0.4
 RUN pip install torch-geometric-temporal
+RUN pip install plotly
 
 RUN apt-get update && apt-get install -y \
     build-essential \
