@@ -119,3 +119,4 @@ gym
 .devcontainer/
 workspace/
 .decontainer
+.Trash-*
