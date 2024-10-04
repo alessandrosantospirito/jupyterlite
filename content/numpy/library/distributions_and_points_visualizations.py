@@ -102,8 +102,8 @@ def plot_gmm_distributions(distributions, weights, ids, n_std=1.96):
     
     for dist_index, (dist, weight, id_set) in enumerate(zip(distributions, weights, ids)):
         for idx, params in zip(id_set, dist):
-            mean, cov = np.array(params[0]), np.array(params[1:])
-            cov_matrix = np.array(cov)
+            # pdb.set_trace()
+            mean, cov_matrix = params[0], params[1:]
             ellipse_x, ellipse_y = create_ellipse_points(mean, cov_matrix, n_std)
             
             # Use the id to select a consistent color
