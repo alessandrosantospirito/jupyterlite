@@ -1,0 +1,16 @@
+{
+  "name": "Supermario-RL Devcontainer",
+  "build": {
+      "dockerfile": "Dockerfile",
+      "context": ".."
+  },
+  "appPort": ["8888-8890:8888-8890"],
+  "runArgs": [
+      "--gpus", "all"
+    //   "--shm-size=8g"
+  ],
+  "containerEnv": {
+      "NVIDIA_VISIBLE_DEVICES": "all",
+      "NVIDIA_DRIVER_CAPABILITIES": "all"
+  }
+}

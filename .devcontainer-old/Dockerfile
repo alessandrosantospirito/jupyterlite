@@ -1,5 +1,4 @@
-FROM ubuntu:22.04
-# FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
+FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
 
 ENV TZ=Etc/UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -19,19 +18,27 @@ RUN apt-get update && \
     python3.8 get-pip.py pip==24.0 && \
     rm get-pip.py
 
+RUN pip install wheel==0.38.4
+RUN pip install setuptools==66.0.0
+RUN pip install gym==0.21.0
+RUN pip install stable_baselines3==1.8.0
 RUN pip install tensorboard
 RUN pip install torch
 RUN pip install torchvision
 RUN pip install jupyter
 RUN pip install notebook
+RUN pip install gym_super_mario_bros==7.3.0
+RUN pip install nes_py
 RUN pip install opencv-python
 RUN pip install ultralytics
 RUN pip install torch-geometric==2.0.4
 RUN pip install torch-geometric-temporal
+RUN pip install plotly
 
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
+    git \
     git \
     zlib1g-dev \
     libopenmpi-dev \
