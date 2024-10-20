@@ -38,15 +38,17 @@ def sort_matrix_by_nth_and_mth_column(matrix, nth_col=0, mth_col=1):
     return matrix
 
 def reverse_sort_matrix_by_nth_entry(matrix, modified_matrix, n=0):
-    sorted_values, sorted_indices = torch.sort(matrix[:, n])
+    sorted_values, sorted_indicies = torch.sort(matrix[:, n])
+    _, reverse_sort_indicies = torch.sort(sorted_indicies)
 
-    return  modified_matrix[sorted_indices]
+    return modified_matrix[reverse_sort_indicies]
 
 def reverse_sort_matrix_by_group(matrix, modified_matrix, grp_idx=0, val_idx=1):
     transposed = matrix.T
     sorted_indices = torch.argsort(transposed[grp_idx] * matrix.shape[grp_idx] + transposed[val_idx])
+    reverse_sorted_indicies = torch.sort(sorted_indices)
     
-    return modified_matrix[sorted_indices]
+    return modified_matrix[reverse_sorted_indicies]
 
 def reverse_sort_matrix_by_nth_and_mth_column(matrix, modified_matrix, nth_col=0, mth_col=1):
     
