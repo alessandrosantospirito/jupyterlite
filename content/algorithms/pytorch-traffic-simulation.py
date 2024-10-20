@@ -220,9 +220,8 @@ def update_cars(cars):
     cars_update[:, 1] += cars_update[:, 2]
 
     # Adjust the cars, such that they could fit into one lane (to execute adjust_cars_no_lane_change)
-    cars_update_ordered_by_lane_and_index = sort_matrix_by_nth_entry(cars_update)
-    cars_update_in_lane = torch.clone(cars_update_ordered_by_lane_and_index)
-    cars_update_in_lane[:, 1] = adjust_cars_no_lane_change(cars_update_ordered_by_lane_and_index[:, 1])[:]
+    cars_update_in_lane = torch.clone(cars_update)
+    cars_update_in_lane[:, 1] = adjust_cars_no_lane_change(cars_update[:, 1])[:]
 
     # Remove the lane offset and put the cars to the original index
     neg_max_values_per_lane = torch.clone(max_values_per_lane)
