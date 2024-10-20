@@ -1,5 +1,21 @@
 import torch
 
+def group_ordering_based_on_sorting(matrix, grp_idx=0, val_idx=1):
+    """
+    matrix: tensor([[ 1.,  2.], [ 0.,  3.], [ 1.,  0.]])
+    b: tensor([[1., 0.], [0., 1.], [1., 2.]])
+    c: tensor([[ 0.,  1.], [ 1.,  0.], [ 1.,  2.]])
+    d: tensor([1, 0, 2])
+    """
+
+    b = torch.empty(matrix.shape[0], 2)
+    b[:, 0] = matrix[:, 0]
+    b[:, 1] = torch.arange(matrix.shape[0])
+    c = sort_matrix_by_nth_entry(b)
+    d = c[:, 1]
+
+    return d
+
 def sort_matrix_by_nth_entry(matrix, n=0):
     sorted_values, sorted_indices = torch.sort(matrix[:, n])
 
@@ -45,18 +61,22 @@ def maximum_value_by_grp(matrix, grp_idx=0, val_idx=1):
 
 def add_to_matrix_mapping_values(matrix, mapping, grp_idx = 0, val_idx = 1):
     """
-    a = tensor([[ 0.,  1.], [ 0.,  5.], [ 0.,  3.], [ 0.,  5.], [ 0.,  6.], [ 1.,  7.], [ 1.,  6.], [ 1., 11.], [ 5.,  4.], [ 7., 10.]])
-    b = tensor([[ 0.,  0.], [ 1.,  7.], [ 5., 12.], [ 7.,  5.]])
-    c = tensor([0, 1, 0, 1, 1, 0, 1, 1, 0, 0])
-    d = tensor([[ 0.,  0.], [ 1.,  7.], [ 6., 19.], [13., 24.]])
-    e = tensor([[ 0.,  1.], [ 1., 12.], [ 0.,  3.], [ 1., 14.], [ 1., 13.], [ 0.,  4.], [ 1., 17.], [ 1., 18.], [ 0.,  5.], [ 0.,  6.]]))
+    a = tensor([[ 0.,  1.], [ 0.,  5.], [ 0.,  3.], [ 1.,  7.], [ 1.,  6.], [ 0.,  4.], [ 1., 10.], [ 1., 11.], [ 0.,  5.], [ 0.,  6.]])
+    b = tensor([[ 0.,  6.], [ 1., 11.]])
+    c = tensor([[0., 0.], [1., 6.]])
+    d = tensor([0, 0, 0, 1, 1, 0, 1, 1, 0, 0])
+    e = tensor([[0., 0.], [1., 6.]])
+    f = tensor([[ 0.,  1.], [ 0.,  5.], [ 0.,  3.], [ 1., 13.], [ 1., 12.], [ 0.,  4.], [ 1., 16.], [ 1., 17.], [ 0.,  5.], [ 0.,  6.]]
     """
 
-    a = matrix
-    b = mapping
-    c = (a[:, 0][..., None] == b[:, 0]).nonzero(as_tuple=True)[1]
-    d = torch.cumsum(b, dim=0)
-    e = a
-    e[:, 1] = e[:, 1] + d[c][:, 1]
-    
-    return e
+    a = torch.tensor([[0, 1, 4], [0, 5, 3], [0, 3, 5], [1, 7, 3], [1, 6, 7], [0, 4, 3], [1, 10, 1], [1, 11, 3], [0, 5, 5], [0, 6, 3]], dtype=torch.float)
+    b = torch.tensor([[ 0.,  6.], [ 1., 11.]])
+    c = b
+    c[1:, 1] = c[:-1, 1]
+    c[0, 1] = 0
+    d = (a[:, 0][..., None] == c[:, 0]).nonzero(as_tuple=True)[1]
+    e = torch.cumsum(c, dim=0)
+    f = a
+    f[:, 1] = f[:, 1] + e[d][:, 1]
+
+    return f
