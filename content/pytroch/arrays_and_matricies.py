@@ -57,6 +57,19 @@ def reverse_sort_matrix_by_nth_and_mth_column(matrix, modified_matrix, nth_col=0
 
     return reverse_sorted_matrix
 
+def filter_columns_based_on_tensor(a, b, grp_idx = 0):
+    """
+    a = tensor([[0., 11.], [2., 3.], [1., 12.]])
+    b = tensor([0., 2.])
+    c = tensor([ True,  True, False]),
+    b = tensor([[ 0., 11.], [ 2.,  3.]])
+    """
+
+    c = torch.isin(a[:, 0], b)
+    d = a[c]
+
+    return d
+
 def maximum_value_by_grp(matrix, grp_idx=0, val_idx=1):
     """
     matrix: torch.tensor([[ 0.,  2.], [ 0.,  3.], [ 1.,  0.], [ 1.,  3.], [ 1.,  4.], [ 2.,  23.], [ 3.,  4.], [ 0.,  7.], [ 1.,  0.], [ 1.,  3.], [ 1.,  7.], [ 0., 11.]])
