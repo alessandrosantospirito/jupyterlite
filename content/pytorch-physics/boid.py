@@ -11,17 +11,41 @@ class Boid:
     min_speed: float = 3
     max_speed: float = 6
     max_acc: float = 0.5
-    view_radius: float = 20
-    view_angle: float = None
-    avoid_radius: float = 8
-    avoid_view: bool = True
-    sep_factor: float = 0.05
-    align_factor: float = 0.05
-    cohe_factor: float = 0.0005
-    # cohe_factor: float = 0.005
-    bias_factor: float = 0.005
-    edge_factor: float = 0.05
+    
+    view_radius: float = 30
+    view_angle: float = None        # human: 220 deg, pigeon: 340 deg, owl: 110 deg
+    
+    avoid_radius: float = 15        
+    avoid_view: bool = True         # only avoid boids in view angle
+    
+    sep_factor: float = 0.05        # avoidfactor
+    align_factor: float = 0.1      # matchingfactor
+    cohe_factor: float = 0.0005       # centeringfactor
+    bias_factor: float = 0.005       
+    edge_factor: float = 0.05        # turnfactor
+    
     is_debug: bool = False
+
+# @dataclass
+# class Boid:
+#     init_speed: float = None
+#     min_speed: float = 3
+#     max_speed: float = 6
+#     max_acc: float = 0.5
+    
+#     view_radius: float = 40
+#     view_angle: float = None        # human: 220 deg, pigeon: 340 deg, owl: 110 deg
+    
+#     avoid_radius: float = 8         
+#     avoid_view: bool = True         # only avoid boids in view angle
+    
+#     sep_factor: float = 0.05        # avoidfactor
+#     align_factor: float = 0.05      # matchingfactor
+#     cohe_factor: float = 0.0005     # centeringfactor
+#     bias_factor: float = 0.005       
+#     edge_factor: float = 0.05        # turnfactor
+    
+#     is_debug: bool = False
 
 class Flock(Boid):
     def __init__(self, D: int = 2, N: int = 1000, box_bottom=0, box_top=500,
