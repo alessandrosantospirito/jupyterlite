@@ -262,6 +262,60 @@ def update_cars(cars, track_sizes):
 
     return updated_cars
 
+def update_cars_with_lane_changes(cars, track_sizes, cars_changing_lanes):
+    # updat the car lanes and fit the cars
+    cars_sorted_and_lanes_update = track_offset_from_slowest_cars(cars, track_sizes, cars_changing_lanes)
+    
+    # Sort cars (since some cars might have changed the lane)
+    cars_sorted = sort_matrix_by_nth_and_mth_column(cars_sorted_and_lanes_update)
+    cars_with_slowest_cars_infront, mask_valid_cars = put_slowest_car_infront(cars_sorted, track_sizes)
+
+    # Put all cars in one lane
+    max_values_per_lane = mapping_max_values_to_prev_lanes(cars_with_slowest_cars_infront)
+    cars_in_single_lane = add_to_matrix_mapping_values(cars_with_slowest_cars_infront, max_values_per_lane)
+
+    # Update the cars and sort for adjust_cars_no_... as well as to use the mask mask_valid_cars
+    cars_update_in_lane_sorted = sort_matrix_by_nth_and_mth_column(cars_in_single_lane)
+    # either drive or change lane
+    no_drive_while_lanechange = torch.ones(cars_update_in_lane_sorted.shape[0])
+    no_drive_while_lanechange[mask_valid_cars] = 1 - cars_changing_lanes.float()
+    cars_update_in_lane_sorted[:, 1] += cars_update_in_lane_sorted[:, 2] * no_drive_while_lanechange
+    
+    # Adjust the cars, such that they could fit into one lane (to execute adjust_cars_no_lane_change)
+    cars_update_in_lane_sorted[:, 1] = adjust_cars_no_lane_change(cars_update_in_lane_sorted[:, 1])
+    
+    # Remove the lane offset and put the cars to the original index
+    neg_max_values_per_lane = torch.clone(max_values_per_lane)
+    neg_max_values_per_lane[:, 1] = - neg_max_values_per_lane[:, 1]
+    cars_update_multi_lane = add_to_matrix_mapping_values(cars_update_in_lane_sorted, neg_max_values_per_lane)
+
+    return cars_update_multi_lane[mask_valid_cars]
+
+def track_offset_from_slowest_cars(cars, track_sizes, cars_changing_lanes):
+    cars_sorted = sort_matrix_by_nth_and_mth_column(cars)
+
+    # calculate the slowest car in each lane
+    indicies_of_slowest_cars = indicies_where_the_value_changes(cars_sorted[:, 0])
+    mod_for_cars = track_sizes[(cars_sorted[:, 0][..., None] == track_sizes[:, 0]).nonzero(as_tuple=True)[1]]
+    num_of_rounds = torch.div(cars_sorted[:, 1], mod_for_cars[:, 1], rounding_mode="trunc")
+    cars_rounds_as_distance = num_of_rounds * mod_for_cars[:, 1]
+    
+    slowest_cars = cars_sorted[indicies_of_slowest_cars]
+    slowest_cars_neg_offsets = torch.column_stack([slowest_cars[:, 0], -cars_rounds_as_distance[indicies_of_slowest_cars]])
+    slowest_cars_offsets = torch.column_stack([slowest_cars[:, 0], cars_rounds_as_distance[indicies_of_slowest_cars]])
+
+    # update lanes
+    cars_sorted[:, 0] += cars_changing_lanes
+    cars_sorted[:, 0] = torch.remainder(cars_sorted[:, 0], 2)
+    
+    # set the slowest cars to be at 0, then do modulo and put the cars back
+    # the distance between slowest and fastes car is always less then the lane distance
+    cars_sorted[:, 1] = add_to_matrix_mapping_values(cars_sorted[:, :2], slowest_cars_neg_offsets)[:, 1]
+    cars_sorted[:, 1] = cars_index_with_track_mod(cars_sorted[:, :2], track_sizes)[:, 1]
+    cars_sorted[:, 1] = add_to_matrix_mapping_values(cars_sorted[:, :2], slowest_cars_offsets)[:, 1]
+    
+    return cars_sorted
+
 #### Hackie
 def filter_columns_based_on_tensor(a, b, grp_idx = 0):
     """
