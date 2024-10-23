@@ -12,40 +12,19 @@ class Boid:
     max_speed: float = 6
     max_acc: float = 0.5
     
-    view_radius: float = 30
+    view_radius: float = 40
     view_angle: float = None        # human: 220 deg, pigeon: 340 deg, owl: 110 deg
     
-    avoid_radius: float = 15        
+    avoid_radius: float = 8         
     avoid_view: bool = True         # only avoid boids in view angle
     
     sep_factor: float = 0.05        # avoidfactor
-    align_factor: float = 0.1      # matchingfactor
-    cohe_factor: float = 0.0005       # centeringfactor
+    align_factor: float = 0.05      # matchingfactor
+    cohe_factor: float = 0.0005     # centeringfactor
     bias_factor: float = 0.005       
     edge_factor: float = 0.05        # turnfactor
     
     is_debug: bool = False
-
-# @dataclass
-# class Boid:
-#     init_speed: float = None
-#     min_speed: float = 3
-#     max_speed: float = 6
-#     max_acc: float = 0.5
-    
-#     view_radius: float = 40
-#     view_angle: float = None        # human: 220 deg, pigeon: 340 deg, owl: 110 deg
-    
-#     avoid_radius: float = 8         
-#     avoid_view: bool = True         # only avoid boids in view angle
-    
-#     sep_factor: float = 0.05        # avoidfactor
-#     align_factor: float = 0.05      # matchingfactor
-#     cohe_factor: float = 0.0005     # centeringfactor
-#     bias_factor: float = 0.005       
-#     edge_factor: float = 0.05        # turnfactor
-    
-#     is_debug: bool = False
 
 class Flock(Boid):
     def __init__(self, D: int = 2, N: int = 1000, box_bottom=0, box_top=500,
@@ -73,6 +52,26 @@ class Flock(Boid):
         if self.is_debug:
             print('pos: \n', self.pos)
             print('vel: \n', self.vel)
+
+    def update_parameters(self, **kwargs):
+        for key, value in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+        
+        # Recalculate dependent attributes
+        self.bound_bottom = self.box_bottom + self.margin_bottom
+        self.bound_top = self.box_top - self.margin_top
+        self.box_upper_mat = self.box_top.unsqueeze(0).expand(self.N, -1).to(self.device)
+        self.box_lower_mat = self.box_bottom.unsqueeze(0).expand(self.N, -1).to(self.device)
+
+    def reset_positions(self):
+        self.pos = torch.rand((self.N, self.D), device=self.device) * (self.bound_top - self.bound_bottom) + self.bound_bottom
+
+    def reset_velocities(self):
+        if self.init_speed is None:
+            self.vel = torch.randn((self.N, self.D), device=self.device) * (self.max_speed - self.min_speed) + self.min_speed
+        else:
+            self.vel = torch.ones((self.N, self.D), device=self.device) * self.init_speed
 
     def parse_to_tensor(self, x):
         if isinstance(x, Number):
