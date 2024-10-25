@@ -16,6 +16,9 @@ RUN pip install notebook
 RUN pip install opencv-python
 RUN pip install numpy
 RUN pip install matplotlib
+RUN pip install pytorch_geometric
+RUN pip install scipy
+RUN pip install pandas
 
 RUN apt-get update && apt-get install -y \
     build-essential \
