@@ -20,4 +20,4 @@ def cartesian_product_for_nodes(list_nodes, self_edge=True):
 def dist_angle_from_matrix(matrix, rules):
     val_edge_pairs = np.array([matrix[b] - matrix[a] for [a,b] in rules])
     
-    return np.linalg.norm(val_edge_pairs, axis=1), np.rad2deg(np.arctan(val_edge_pairs[:, 1] / val_edge_pairs[:, 0]))
+    return np.linalg.norm(val_edge_pairs, axis=1), np.rad2deg(np.arctan2(val_edge_pairs[:, 1], (val_edge_pairs[:, 0])))
