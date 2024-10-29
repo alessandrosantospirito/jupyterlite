@@ -16,7 +16,7 @@ RUN pip install notebook
 RUN pip install opencv-python
 RUN pip install numpy
 RUN pip install matplotlib
-RUN pip install pytorch_geometric
+RUN pip install torch-geometric
 RUN pip install scipy
 RUN pip install pandas
 

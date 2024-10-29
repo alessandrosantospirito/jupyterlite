@@ -4,7 +4,6 @@ import math
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from IPython.display import HTML
-import Divergence_Free_Interpolant as dfi
 import sys
 import os
 from IPython.display import display, HTML
